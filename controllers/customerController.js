@@ -1,22 +1,17 @@
-const express = require('express');
-const fs = require('fs');
+const fs = require('fs')
 
-const router = express.Router();
 
 const customers = JSON.parse(
-    fs.readFileSync(`${__dirname}/data/dummy.json`)
+    fs.readFileSync(`${__dirname}/../data/dummy.json`)
 );
 
-const defaultRouter = (req, res) => {
-    res.send('<p>Hello FSW 1 Tercinta')
-}
 
 const getCustomerData = (req, res) => {
-    console.log(req.params)
-
+    console.log(req.requestTime)
     res.status(200).json({
         status: 'Success',
         totalData: customers.length,
+        requestAt: req.requestTime,
         data: {
             customers
         }
@@ -103,7 +98,7 @@ const deleteUser = (req, res) => {
     console.log(customerIndex)
 
     fs.writeFile(
-        `${__dirname}/data/dummy.json`, JSON.stringify(customers), err => {
+        `${__dirname}/../data/dummy.json`, JSON.stringify(customers), err => {
             if (err) {
                 return res.status(500).json({
                     status: 'error',
@@ -118,12 +113,10 @@ const deleteUser = (req, res) => {
     );
 }
 
-router.route("/").get(defaultRouter)
-router.route("/api/v1/customers").get(getCustomerData).post(insertUser)
-router
-    .route("/api/v1/customers/:id")
-    .get(getCustomerbyId)
-    .patch(updateUser)
-    .delete(deleteUser)
-
-module.exports = router;
+module.exports = {
+    getCustomerData,
+    getCustomerbyId,
+    insertUser,
+    updateUser,
+    deleteUser,
+}
